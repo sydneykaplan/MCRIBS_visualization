@@ -11,7 +11,7 @@ import getopt
 opts, args = getopt.getopt(sys.argv[1:], "vh", ['surf-volgeom='])
 
 if len(args) != 1:
-	print "The number of arguments must be 1"
+	print("The number of arguments must be 1")
 	print sys.argv[0] + " <vtp file>"
 	exit()
 
