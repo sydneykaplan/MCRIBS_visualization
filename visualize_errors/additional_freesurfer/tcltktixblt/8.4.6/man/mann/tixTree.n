@@ -1,0 +1,752 @@
+'\"
+'\" $Id: tixTree.n,v 1.2.2.2 2001/12/09 03:25:15 idiscovery Exp $
+'\"
+'\"
+'\" Copyright (c) 1993-1999 Ioi Kim Lam.
+'\" Copyright (c) 2000-2001 Tix Project Group.
+'\"
+'\" See the file "license.terms" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\" 
+'\" The definitions below are for supplemental macros used in Tcl/Tk
+'\" manual entries.
+'\"
+'\" .AP type name in/out ?indent?
+'\"	Start paragraph describing an argument to a library procedure.
+'\"	type is type of argument (int, etc.), in/out is either "in", "out",
+'\"	or "in/out" to describe whether procedure reads or modifies arg,
+'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+'\"	needed;  use .AS below instead)
+'\"
+'\" .AS ?type? ?name?
+'\"	Give maximum sizes of arguments for setting tab stops.  Type and
+'\"	name are examples of largest possible arguments that will be passed
+'\"	to .AP later.  If args are omitted, default tab stops are used.
+'\"
+'\" .BS
+'\"	Start box enclosure.  From here until next .BE, everything will be
+'\"	enclosed in one large box.
+'\"
+'\" .BE
+'\"	End of box enclosure.
+'\"
+'\" .CS
+'\"	Begin code excerpt.
+'\"
+'\" .CE
+'\"	End code excerpt.
+'\"
+'\" .VS ?version? ?br?
+'\"	Begin vertical sidebar, for use in marking newly-changed parts
+'\"	of man pages.  The first argument is ignored and used for recording
+'\"	the version when the .VS was added, so that the sidebars can be
+'\"	found and removed when they reach a certain age.  If another argument
+'\"	is present, then a line break is forced before starting the sidebar.
+'\"
+'\" .VE
+'\"	End of vertical sidebar.
+'\"
+'\" .DS
+'\"	Begin an indented unfilled display.
+'\"
+'\" .DE
+'\"	End of indented unfilled display.
+'\"
+'\" .SO
+'\"	Start of list of standard options for a Tk widget.  The
+'\"	options follow on successive lines, in four columns separated
+'\"	by tabs.
+'\"
+'\" .SE
+'\"	End of list of standard options for a Tk widget.
+'\"
+'\" .OP cmdName dbName dbClass
+'\"	Start of description of a specific option.  cmdName gives the
+'\"	option's name as specified in the class command, dbName gives
+'\"	the option's name in the option database, and dbClass gives
+'\"	the option's class in the option database.
+'\"
+'\" .UL arg1 arg2
+'\"	Print arg1 underlined, then print arg2 normally.
+'\"
+'\" RCS: @(#) $Id: man.macros,v 1.1.1.1.2.2 2001/12/09 03:25:15 idiscovery Exp $
+'\"
+'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.if t .wh -1.3i ^B
+.nr ^l \n(.l
+.ad b
+'\"	# Start an argument description
+.de AP
+.ie !"\\$4"" .TP \\$4
+.el \{\
+.   ie !"\\$2"" .TP \\n()Cu
+.   el          .TP 15
+.\}
+.ta \\n()Au \\n()Bu
+.ie !"\\$3"" \{\
+\&\\$1	\\fI\\$2\\fP	(\\$3)
+.\".b
+.\}
+.el \{\
+.br
+.ie !"\\$2"" \{\
+\&\\$1	\\fI\\$2\\fP
+.\}
+.el \{\
+\&\\fI\\$1\\fP
+.\}
+.\}
+..
+'\"	# define tabbing values for .AP
+.de AS
+.nr )A 10n
+.if !"\\$1"" .nr )A \\w'\\$1'u+3n
+.nr )B \\n()Au+15n
+.\"
+.if !"\\$2"" .nr )B \\w'\\$2'u+\\n()Au+3n
+.nr )C \\n()Bu+\\w'(in/out)'u+2n
+..
+.AS Tcl_Interp Tcl_CreateInterp in/out
+'\"	# BS - start boxed text
+'\"	# ^y = starting y location
+'\"	# ^b = 1
+.de BS
+.br
+.mk ^y
+.nr ^b 1u
+.if n .nf
+.if n .ti 0
+.if n \l'\\n(.lu\(ul'
+.if n .fi
+..
+'\"	# BE - end boxed text (draw box now)
+.de BE
+.nf
+.ti 0
+.mk ^t
+.ie n \l'\\n(^lu\(ul'
+.el \{\
+.\"	Draw four-sided box normally, but don't draw top of
+.\"	box if the box started on an earlier page.
+.ie !\\n(^b-1 \{\
+\h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.el \}\
+\h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.\}
+.fi
+.br
+.nr ^b 0
+..
+'\"	# VS - start vertical sidebar
+'\"	# ^Y = starting y location
+'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.de VS
+.if !"\\$2"" .br
+.mk ^Y
+.ie n 'mc \s12\(br\s0
+.el .nr ^v 1u
+..
+'\"	# VE - end of vertical sidebar
+.de VE
+.ie n 'mc
+.el \{\
+.ev 2
+.nf
+.ti 0
+.mk ^t
+\h'|\\n(^lu+3n'\L'|\\n(^Yu-1v\(bv'\v'\\n(^tu+1v-\\n(^Yu'\h'-|\\n(^lu+3n'
+.sp -1
+.fi
+.ev
+.\}
+.nr ^v 0
+..
+'\"	# Special macro to handle page bottom:  finish off current
+'\"	# box/sidebar if in box/sidebar mode, then invoked standard
+'\"	# page bottom macro.
+.de ^B
+.ev 2
+'ti 0
+'nf
+.mk ^t
+.if \\n(^b \{\
+.\"	Draw three-sided box if this is the box's first page,
+.\"	draw two sides but no top otherwise.
+.ie !\\n(^b-1 \h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.el \h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.\}
+.if \\n(^v \{\
+.nr ^x \\n(^tu+1v-\\n(^Yu
+\kx\h'-\\nxu'\h'|\\n(^lu+3n'\ky\L'-\\n(^xu'\v'\\n(^xu'\h'|0u'\c
+.\}
+.bp
+'fi
+.ev
+.if \\n(^b \{\
+.mk ^y
+.nr ^b 2
+.\}
+.if \\n(^v \{\
+.mk ^Y
+.\}
+..
+'\"	# DS - begin display
+.de DS
+.RS
+.nf
+.sp
+..
+'\"	# DE - end display
+.de DE
+.fi
+.RE
+.sp
+..
+'\"	# SO - start of list of standard options
+.de SO
+.SH "STANDARD OPTIONS"
+.LP
+.nf
+.ta 4c 8c 12c
+.ft B
+..
+'\"	# SE - end of list of standard options
+.de SE
+.fi
+.ft R
+.LP
+See the \\fBoptions\\fR manual entry for details on the standard options.
+..
+'\"	# OP - start of full description for a single option
+.de OP
+.LP
+.nf
+.ta 4c
+Command-Line Name:	\\fB\\$1\\fR
+Database Name:	\\fB\\$2\\fR
+Database Class:	\\fB\\$3\\fR
+.fi
+.IP
+..
+'\"	# CS - begin code excerpt
+.de CS
+.RS
+.nf
+.ta .25i .5i .75i 1i
+..
+'\"	# CE - end code excerpt
+.de CE
+.fi
+.RE
+..
+.de UL
+\\$1\l'|0\(ul'\\$2
+..
+'\" copyrighted: (c) 1990 The Regents of the University of California.
+'\"              (c) 1994-1995 Sun Microsystems, Inc.
+'\" The license terms of the Tcl/Tk distrobution are in the file
+'\" license.tcl.
+'\" The definitions below are for supplemental macros used in Tcl/Tk
+'\" manual entries.
+'\"
+'\" .AP type name in/out ?indent?
+'\"	Start paragraph describing an argument to a library procedure.
+'\"	type is type of argument (int, etc.), in/out is either "in", "out",
+'\"	or "in/out" to describe whether procedure reads or modifies arg,
+'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+'\"	needed;  use .AS below instead)
+'\"
+'\" .AS ?type? ?name?
+'\"	Give maximum sizes of arguments for setting tab stops.  Type and
+'\"	name are examples of largest possible arguments that will be passed
+'\"	to .AP later.  If args are omitted, default tab stops are used.
+'\"
+'\" .BS
+'\"	Start box enclosure.  From here until next .BE, everything will be
+'\"	enclosed in one large box.
+'\"
+'\" .BE
+'\"	End of box enclosure.
+'\"
+'\" .CS
+'\"	Begin code excerpt.
+'\"
+'\" .CE
+'\"	End code excerpt.
+'\"
+'\" .VS ?version? ?br?
+'\"	Begin vertical sidebar, for use in marking newly-changed parts
+'\"	of man pages.  The first argument is ignored and used for recording
+'\"	the version when the .VS was added, so that the sidebars can be
+'\"	found and removed when they reach a certain age.  If another argument
+'\"	is present, then a line break is forced before starting the sidebar.
+'\"
+'\" .VE
+'\"	End of vertical sidebar.
+'\"
+'\" .DS
+'\"	Begin an indented unfilled display.
+'\"
+'\" .DE
+'\"	End of indented unfilled display.
+'\"
+'\" .SO
+'\"	Start of list of standard options for a Tk widget.  The
+'\"	options follow on successive lines, in four columns separated
+'\"	by tabs.
+'\"
+'\" .SE
+'\"	End of list of standard options for a Tk widget.
+'\"
+'\" .OP cmdName dbName dbClass
+'\"	Start of description of a specific option.  cmdName gives the
+'\"	option's name as specified in the class command, dbName gives
+'\"	the option's name in the option database, and dbClass gives
+'\"	the option's class in the option database.
+'\"
+'\" .UL arg1 arg2
+'\"	Print arg1 underlined, then print arg2 normally.
+'\"
+'\" RCS: @(#) $Id: man.macros,v 1.1.1.1.2.2 2001/12/09 03:25:15 idiscovery Exp $
+'\"
+'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.if t .wh -1.3i ^B
+.nr ^l \n(.l
+.ad b
+'\"	# Start an argument description
+.de AP
+.ie !"\\$4"" .TP \\$4
+.el \{\
+.   ie !"\\$2"" .TP \\n()Cu
+.   el          .TP 15
+.\}
+.ta \\n()Au \\n()Bu
+.ie !"\\$3"" \{\
+\&\\$1	\\fI\\$2\\fP	(\\$3)
+.\".b
+.\}
+.el \{\
+.br
+.ie !"\\$2"" \{\
+\&\\$1	\\fI\\$2\\fP
+.\}
+.el \{\
+\&\\fI\\$1\\fP
+.\}
+.\}
+..
+'\"	# define tabbing values for .AP
+.de AS
+.nr )A 10n
+.if !"\\$1"" .nr )A \\w'\\$1'u+3n
+.nr )B \\n()Au+15n
+.\"
+.if !"\\$2"" .nr )B \\w'\\$2'u+\\n()Au+3n
+.nr )C \\n()Bu+\\w'(in/out)'u+2n
+..
+.AS Tcl_Interp Tcl_CreateInterp in/out
+'\"	# BS - start boxed text
+'\"	# ^y = starting y location
+'\"	# ^b = 1
+.de BS
+.br
+.mk ^y
+.nr ^b 1u
+.if n .nf
+.if n .ti 0
+.if n \l'\\n(.lu\(ul'
+.if n .fi
+..
+'\"	# BE - end boxed text (draw box now)
+.de BE
+.nf
+.ti 0
+.mk ^t
+.ie n \l'\\n(^lu\(ul'
+.el \{\
+.\"	Draw four-sided box normally, but don't draw top of
+.\"	box if the box started on an earlier page.
+.ie !\\n(^b-1 \{\
+\h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.el \}\
+\h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.\}
+.fi
+.br
+.nr ^b 0
+..
+'\"	# VS - start vertical sidebar
+'\"	# ^Y = starting y location
+'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.de VS
+.if !"\\$2"" .br
+.mk ^Y
+.ie n 'mc \s12\(br\s0
+.el .nr ^v 1u
+..
+'\"	# VE - end of vertical sidebar
+.de VE
+.ie n 'mc
+.el \{\
+.ev 2
+.nf
+.ti 0
+.mk ^t
+\h'|\\n(^lu+3n'\L'|\\n(^Yu-1v\(bv'\v'\\n(^tu+1v-\\n(^Yu'\h'-|\\n(^lu+3n'
+.sp -1
+.fi
+.ev
+.\}
+.nr ^v 0
+..
+'\"	# Special macro to handle page bottom:  finish off current
+'\"	# box/sidebar if in box/sidebar mode, then invoked standard
+'\"	# page bottom macro.
+.de ^B
+.ev 2
+'ti 0
+'nf
+.mk ^t
+.if \\n(^b \{\
+.\"	Draw three-sided box if this is the box's first page,
+.\"	draw two sides but no top otherwise.
+.ie !\\n(^b-1 \h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.el \h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.\}
+.if \\n(^v \{\
+.nr ^x \\n(^tu+1v-\\n(^Yu
+\kx\h'-\\nxu'\h'|\\n(^lu+3n'\ky\L'-\\n(^xu'\v'\\n(^xu'\h'|0u'\c
+.\}
+.bp
+'fi
+.ev
+.if \\n(^b \{\
+.mk ^y
+.nr ^b 2
+.\}
+.if \\n(^v \{\
+.mk ^Y
+.\}
+..
+'\"	# DS - begin display
+.de DS
+.RS
+.nf
+.sp
+..
+'\"	# DE - end display
+.de DE
+.fi
+.RE
+.sp
+..
+'\"	# SO - start of list of standard options
+.de SO
+.SH "STANDARD OPTIONS"
+.LP
+.nf
+.ta 4c 8c 12c
+.ft B
+..
+'\"	# SE - end of list of standard options
+.de SE
+.fi
+.ft R
+.LP
+See the \\fBoptions\\fR manual entry for details on the standard options.
+..
+'\"	# OP - start of full description for a single option
+.de OP
+.LP
+.nf
+.ta 4c
+Command-Line Name:	\\fB\\$1\\fR
+Database Name:	\\fB\\$2\\fR
+Database Class:	\\fB\\$3\\fR
+.fi
+.IP
+..
+'\"	# CS - begin code excerpt
+.de CS
+.RS
+.nf
+.ta .25i .5i .75i 1i
+..
+'\"	# CE - end code excerpt
+.de CE
+.fi
+.RE
+..
+.de UL
+\\$1\l'|0\(ul'\\$2
+..
+'\"----------------------------------------------------------------------
+.TH tixTree n 4.0 Tix "Tix Built-In Commands"
+.BS
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH NAME
+tixTree \- Create and manipulate tixTree widgets
+'\"
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH SYNOPSIS
+\fBtixTree \fIpathName \fR?\fIoptions\fR?
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH SUPER-CLASS
+The \fBTixTree\fR class is derived from the \fBTixScrolledHList\fR
+class and inherits all the commands, options and subwidgets of its
+super-class.
+'\"
+'\"----------------------------------------------------------------------
+.SH "STANDARD OPTIONS"
+'\"
+\fBTixTree\fR supports all the standard options of a frame widget.
+See the \fBoptions(n)\fR manual entry for details on the standard options.
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH "WIDGET-SPECIFIC OPTIONS"
+'\"
+'\"----------BEGIN
+.OP \-browsecmd browseCmd BrowseCmd
+Specifies a command to call whenever the user browses on an entry
+(usually by single-clicking on the entry). The command is called with
+one argument, the pathname of the entry.
+'\"----------END
+'\"
+'\"
+'\"----------BEGIN
+.OP \-closecmd closeCmd CloseCmd
+Specifies a command to call whenever an entry needs to be closed (See
+the BINDINGS section below). This command is called with one argument,
+the pathname of the entry. This command should perform appropriate
+actions to close the specified entry. If the \fB\-closecmd\fR option
+is not specified, the default closing action is to hide all child
+entries of the specified entry.
+'\"----------END
+'\"
+'\"----------BEGIN
+.OP \-command command Command
+Specifies a command to call whenever the user activates an entry
+(usually by double-clicking on the entry). The command
+is called with one argument, the pathname of the entry.
+'\"----------END
+'\"
+'\"----------BEGIN
+.OP \-ignoreinvoke ignoreInvoke IgnoreInvoke
+A Boolean value that specifies when a branch should be opened or
+closed. A branch will always be opened or closed when the user presses
+the (+) and (-) indicators. However, when the user invokes a branch
+(by doublc-clicking or pressing <Return>), the branch will be opened
+or closed only if \fB\-ignoreinvoke\fR is set to false (the default
+setting).
+'\"----------END
+'\"
+
+'\"----------BEGIN
+.OP \-opencmd openCmd OpenCmd
+Specifies a command to call whenever an entry needs to be opened (See
+the BINDINGS section below). This command is called with one argument,
+the pathname of the entry. This command should perform appropriate
+actions to open the specified entry. If the \fB\-opencmd\fR option
+is not specified, the default opening action is to show all the child
+entries of the specified entry.
+'\"----------END
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH SUBWIDGETS
+'\"----------BEGIN
+.LP
+.nf
+Name:		\fBhlist\fR
+Class:		\fBTixHList\fR
+.fi
+.IP
+The hierarchical listbox that displays the tree.
+'\"----------END
+'\"
+'\"----------BEGIN
+.LP
+.nf
+Name:		\fBhsb\fR
+Class:		\fBScrollbar\fR
+.fi
+.IP
+The horizontal scrollbar subwidget.
+'\"----------END
+'\"
+'\"----------BEGIN
+.LP
+.nf
+Name:		\fBvsb\fR
+Class:		\fBScrollbar\fR
+.fi
+.IP
+The vertical scrollbar subwidget.
+'\"----------END
+'\"
+.BE
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH DESCRIPTION
+'\"
+.PP
+'\"
+The \fBtixTree\fR command creates a new window (given by the
+\fIpathName\fR argument) and makes it into a Tree widget.  Additional
+options, described above, may be specified on the command line or in
+the option database to configure aspects of the Tree widget such as its
+cursor and relief.
+.PP
+The Tree widget can be used to display hierachical data in a tree
+form. The user can adjust the view of the tree by opening or closing
+parts of the tree.
+.PP
+To display a static tree structure, you can add the entries into the
+\fBhlist\fR subwidget and hide any entries as desired. Then you can
+call the \fBautosetmode\fR method. This will set up the Tree widget so
+that it handles all the \fIopen\fR and \fIclose\fR events
+automatically.
+'\"(TODO add an example).
+.PP
+The above method is not applicable if you want to maintain a dynamic
+tree structure, i.e, you do not know all the entries in the tree and
+you need to add or delete entries subsequently. To do this, you should
+first create the entries in the \fBhlist\fR subwidget. Then, use the
+setmode method to indicate the entries that can be opened or closed,
+and use the \fB\-opencmd\fR and \fB \-closecmd\fR options to handle
+the opening and closing events.
+'\"(TODO add an example).
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH WIDGET COMMANDS
+.PP
+'\"
+The \fBtixTree\fR command creates a new Tcl command whose name is the
+same as the path name of the Tree's window.  This command may be used
+to invoke various operations on the widget. It has the following
+general form:
+'\"
+.RS
+.CS
+'\"
+\fIpathName option \fR?\fIarg arg ...\fR?
+.CE
+.RE
+'\"
+\fIPathName\fR is the name of the command, which is the same as the
+Tree widget's path name. \fIOption\fR and the \fIarg\fRs
+determine the exact behavior of the command. The following commands
+are possible for Tree widgets:
+'\"
+.TP
+\fIpathName \fBautosetmode\fR
+'\"
+This command calls the \fBsetmode\fR method for all the entries in
+this Tree widget: if an entry has no child entries, its mode is set to
+\fBnone\fR. Otherwise, if the entry has any hidden child entries, its
+mode is set to \fBopen\fR; otherwise its mode is set to \fBclose\fR.
+'\"
+.TP
+\fIpathName \fBcget\fR \fIoption\fR
+'\"
+Returns the current value of the configuration option given by
+\fIoption\fR. \fIOption\fR may have any of the values accepted by the
+\fBtixTree\fR command.
+'\"
+'\"
+.TP
+\fIpathName \fBclose \fIentryPath\fR
+'\"
+Close the entry given by \fIentryPath\fR if its \fImode\fR is \fBclose\fR.
+'\"
+'\"
+.TP
+\fIpathName \fBconfigure\fR ?\fIoption\fR? \fI?value option value ...\fR?
+'\"
+Query or modify the configuration options of the widget.  If no
+\fIoption\fR is specified, returns a list describing all of the
+available options for \fIpathName\fR (see \fBTk_ConfigureInfo\fR for
+information on the format of this list). If \fIoption\fR is specified
+with no \fIvalue\fR, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no \fIoption\fR is specified).  If
+one or more \fIoption\-value\fR pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  \fIOption\fR may have
+any of the values accepted by the \fBtixTree\fR command.
+'\"
+'\"
+.TP
+\fIpathName \fBgetmode \fIentryPath\fR
+'\"
+Returns the current \fImode\fR of the entry given by \fIentryPath\fR.
+'\"
+.TP
+\fIpathName \fBopen \fIentryPath\fR
+'\"
+Open the entry givaen by \fIentryPath\fR if its \fImode\fR is \fBopen\fR.
+'\"
+.TP
+\fIpathName \fBsetmode \fI entryPath mode\fR
+'\"
+This command is used to indicate whether the entry given by
+\fIentryPath\fR has children entries and whether the children are
+visible. \fImode\fR must be one of \fBopen\fR,
+\fBclose\fR or \fBnone\fR. If \fImode\fR is set to \fBopen\fR, a (+)
+indicator is drawn next the the entry. If \fImode\fR is set to
+\fBclose\fR, a (-) indicator is drawn next the the entry. If
+\fImode\fR is set to \fBnone\fR, no indicators will be drawn for this
+entry. The default \fImode\fR is none. The \fBopen\fR mode indicates
+the entry has hidden children and this entry can be opened by the
+user. The \fBclose\fR mode indicates that all the children of the entry
+are now visible and the entry can be closed by the user.
+'\"
+.TP
+\fIpathName \fBsubwidget \fI name ?args?\fR 
+'\"
+When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+'\"
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH BINDINGS
+.PP
+'\"
+The basic mouse and keyboard bindings of the Tree widget are the same
+as the bindings of the HList widget.
+
+In addition, the entries can be opened or closed under the following
+conditions:
+'\"
+.IP [1]
+If the \fImode\fR of the entry is \fBopen\fR, it can be opened by clicking
+on its (+) indicator or double-clicking on the entry.
+'\"
+.IP [2]
+If the \fImode\fR of the entry is \fBclose\fR, it can be closed by clicking
+on its (-) indicator or double-clicking on the entry.
+'\"
+'\"
+'\"----------------------------------------------------------------------
+.SH KEYWORDS
+Tix(n),tixHList(n)
+
+
+

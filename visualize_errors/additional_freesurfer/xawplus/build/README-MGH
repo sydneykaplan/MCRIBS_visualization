@@ -1,0 +1,27 @@
+xawplus-3.1.0-MGH.tar.gz contains a modified version of the
+source bundle called xawplus-3.1.0.tgz that is distributed
+from the web site: http://people.freenet.de/kra/XawPlus/
+
+Modifications were made to compile the code under gcc 4.0, 
+which is very picky with its warnings and errors (things 
+like unitialized vars and missing indent bracing).  
+The mods should not affect runtime operation.
+
+Also, the makefile was modified to build only the static
+libs, and to install in a directory one above the source
+directory.
+
+So, at the NMR Center, this is the install procedure:
+
+  cd /usr/pubsw/packages/xawplus
+  mkdir 3.1.0
+  ln -s 3.1.0 current
+  cd current
+  tar zxvf xawplus-3.1.0-MGH.tar.gz
+  ln -s XawPlus-MGH src
+  cd src
+  make
+  make install
+
+------------
+NJS 7Nov2006
