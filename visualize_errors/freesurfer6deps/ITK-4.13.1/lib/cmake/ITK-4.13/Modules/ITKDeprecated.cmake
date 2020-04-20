@@ -1,0 +1,13 @@
+set(ITKDeprecated_LOADED 1)
+set(ITKDeprecated_ENABLE_SHARED "0")
+set(ITKDeprecated_DEPENDS "ITKCommon;ITKDICOMParser;ITKIOGDCM;ITKIOImageBase;ITKMesh;ITKNIFTI;ITKV3Compatibility;ITKZLIB")
+set(ITKDeprecated_PUBLIC_DEPENDS "")
+set(ITKDeprecated_TRANSITIVE_DEPENDS "ITKMesh;ITKV3Compatibility")
+set(ITKDeprecated_PRIVATE_DEPENDS "ITKCommon;ITKDICOMParser;ITKIOGDCM;ITKIOImageBase;ITKNIFTI;ITKZLIB")
+set(ITKDeprecated_LIBRARIES "ITKDeprecated")
+set(ITKDeprecated_INCLUDE_DIRS "${ITK_INSTALL_PREFIX}/include/ITK-4.13")
+set(ITKDeprecated_LIBRARY_DIRS "")
+set(ITKDeprecated_RUNTIME_LIBRARY_DIRS "${ITK_INSTALL_PREFIX}/lib")
+set(ITKDeprecated_TARGETS_FILE "")
+set(ITKDeprecated_FACTORY_NAMES "")
+

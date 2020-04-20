@@ -1,0 +1,13 @@
+set(ITKV3Compatibility_LOADED 1)
+set(ITKV3Compatibility_ENABLE_SHARED "0")
+set(ITKV3Compatibility_DEPENDS "ITKDisplacementField")
+set(ITKV3Compatibility_PUBLIC_DEPENDS "")
+set(ITKV3Compatibility_TRANSITIVE_DEPENDS "ITKDisplacementField")
+set(ITKV3Compatibility_PRIVATE_DEPENDS "")
+set(ITKV3Compatibility_LIBRARIES "ITKCommon;ITKStatistics;ITKTransform;ITKSpatialObjects;ITKPath")
+set(ITKV3Compatibility_INCLUDE_DIRS "${ITK_INSTALL_PREFIX}/include/ITK-4.13")
+set(ITKV3Compatibility_LIBRARY_DIRS "")
+set(ITKV3Compatibility_RUNTIME_LIBRARY_DIRS "${ITK_INSTALL_PREFIX}/lib")
+set(ITKV3Compatibility_TARGETS_FILE "")
+set(ITKV3Compatibility_FACTORY_NAMES "")
+

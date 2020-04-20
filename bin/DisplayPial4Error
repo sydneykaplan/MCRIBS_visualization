@@ -6,6 +6,12 @@ then
 	exit
 fi
 
+export PATH=$MCRIBS_HOME/bin:$PATH
+
+export PATH=$MCRIBS_HOME/MIRTK/MIRTK-install/bin:$MCRIBS_HOME/MIRTK/MIRTK-install/tools:$PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MCRIBS_HOME/MIRTK/MIRTK-install/lib:$MCRIBS_HOME/VTK/VTK-install/lib
+export PYTHONPATH=$PYTHONPATH:$MCRIBS_HOME/MIRTK/MIRTK-install/lib/python:$MCRIBS_HOME/lib/python
+
 SUBJID=$1
 
 #if [ ! -f "surf_ensurepial/$SUBJID/temp/pial-5.CollisionMask.curv" -o ! -z "$2" ]
@@ -14,11 +20,13 @@ SUBJID=$1
 #fi
 VOLGEOM=TissueSeg/${SUBJID}_all_labels.nii.gz
 
-VTPExtractAll --surf-volgeom=$VOLGEOM SurfReconDeformable/$SUBJID/temp/pial-5.vtp
+`dirname $0`/../VTK/VTK-install/bin/vtkpython `dirname $0`/VTPExtractAll --surf-volgeom=$VOLGEOM SurfReconDeformable/$SUBJID/temp/pial-5.vtp
 #./VTPExtractAll --surf-volgeom=$VOLGEOM SurfReconDeformable/$SUBJID/meshes/white.vtp &
 #./VTPExtractAll --surf-volgeom=$VOLGEOM SurfReconDeformable/$SUBJID/meshes/white+internal.vtp &
 
-W=`PialDisplayCollisionVertices SurfReconDeformable/$SUBJID/temp/pial-5.vtp`
+VTK=`dirname $0`/../VTK/VTK-install/bin/vtkpython
+B=`dirname $0`/PialDisplayCollisionVertices
+W=`$VTK $B SurfReconDeformable/$SUBJID/temp/pial-5.vtp`
 freeview \
 	-v RawT2RadiologicalIsotropic/$SUBJID.nii.gz \
 	-v TissueSeg/${SUBJID}_all_labels_manedit.nii.gz:colormap=lut:lut=$MCRIBS_HOME/lib/drawem_labels_FSLUT.txt:opacity=0.3 \
